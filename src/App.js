@@ -48,8 +48,22 @@ function App() {
 			}
 		})
 
+		setToDos((prevState) => [...prevState, toDo])
+
 		setTime('')
 		setTitle('')
+	}
+
+	const handleDelete = async (id) => {
+		await fetch(`${API}/todos/${id}`, {
+			method: "DELETE"
+		})
+
+		setToDos((prevState) => prevState.filter((todo) => todo.id !== id))
+	}
+
+	if(loading){
+		return <p>Carregando. . .</p>
 	}
 
   return (
@@ -90,7 +104,14 @@ function App() {
 				{toDos.length === 0 && <p>Não há itens na lista ainda!</p>}
 				{toDos.map((toDo) => (
 					<div className="toDo" key={toDo.id}>
-						<p>{toDo.title}</p>
+						<h3 className={toDo.done ? 'todo-done' : ''}>{toDo.title}</h3>
+						<p>Duração: {toDo.time}</p>
+						<div>
+							<span>
+								{!toDo.done ? <BsBookmarkCheck/> : <BsBookmarkCheckFill/>}
+							</span>
+							<BsTrash onClick={() => handleDelete(toDo.id)}/>
+						</div>
 					</div>
 				))}
 			</div>
